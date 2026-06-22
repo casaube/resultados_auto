@@ -70,11 +70,26 @@ def iniciar_driver() -> webdriver.Edge:
     }
     options.add_experimental_option("prefs", prefs)
 
-    service = Service(EdgeChromiumDriverManager().install())
-    driver = webdriver.Edge(service=service, options=options)
+    # Tenta usar o msedgedriver.exe local caso o usuário o tenha baixado na mesma pasta do script
+    local_driver = Path(__file__).parent / "msedgedriver.exe"
+    if local_driver.exists():
+        logger.info(f"Usando WebDriver do Edge local: {local_driver}")
+        service = Service(executable_path=str(local_driver))
+        driver = webdriver.Edge(service=service, options=options)
+    else:
+        try:
+            logger.info("Tentando obter driver do Edge via webdriver-manager...")
+            service = Service(EdgeChromiumDriverManager().install())
+            driver = webdriver.Edge(service=service, options=options)
+        except Exception as e:
+            logger.warning(f"Erro ao usar webdriver-manager ({e}). Tentando abrir o Edge diretamente pelo Selenium Manager...")
+            # Fallback padrão do Selenium 4.x (usa o Selenium Manager interno)
+            driver = webdriver.Edge(options=options)
+
     driver.maximize_window()
     logger.info("Driver Edge iniciado.")
     return driver
+
 
 
 # ──────────────────────────────────────────────────────────────────────────────
