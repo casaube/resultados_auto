@@ -52,12 +52,15 @@ def iniciar_driver() -> webdriver.Edge:
     import os
     options = Options()
 
+    # Usamos uma pasta de perfil de automação exclusiva dentro do próprio projeto.
+    # Isso evita conflitos e erros de bloqueio caso o seu Edge pessoal já esteja aberto,
+    # enquanto mantém a sua sessão do WhatsApp Web salva após o primeiro login.
     perfil_edge = os.path.join(
-        os.environ.get("LOCALAPPDATA", ""),
-        r"Microsoft\Edge\User Data"
+        os.path.dirname(os.path.abspath(__file__)),
+        "perfil_automacao"
     )
     options.add_argument(f"--user-data-dir={perfil_edge}")
-    options.add_argument("--profile-directory=Default")
+
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_experimental_option("useAutomationExtension", False)

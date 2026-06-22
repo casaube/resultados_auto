@@ -30,6 +30,10 @@ laudos/
 historico_envios.db
 historico_envios.csv
 
+# ─── Perfil de Automação do Navegador (contém cookies/sessões locais) ──────────
+perfil_automacao/
+
+
 
 # ─── Editores e IDEs ──────────────────────────────────────────────────────────
 .vscode/
