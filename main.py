@@ -28,6 +28,8 @@ from datetime import date
 import lab_bot
 import whatsapp_bot
 import config
+import tracker
+
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -102,7 +104,11 @@ def main() -> None:
     erros         = []
 
     try:
+        # Inicializa o rastreador de envios (SQLite + CSV)
+        tracker.inicializar_rastreador()
+
         # ── 1. Inicia o Edge e aguarda login manual ───────────────────────────
+
         logger.info("ETAPA 1 — Iniciando navegador Edge...")
         driver = lab_bot.iniciar_driver()
         lab_bot.aguardar_login_manual(driver)
@@ -131,9 +137,15 @@ def main() -> None:
         # ── 4. Processa cada pedido ───────────────────────────────────────────
         for idx, pedido in enumerate(pedidos_qualificados, start=1):
             numero = pedido["numero"]
+
+            if tracker.pedido_ja_enviado(numero):
+                logger.info(f"⏭  Pedido {numero} já enviado anteriormente. Pulando...")
+                continue
+
             logger.info(f"\n{'─'*65}")
             logger.info(f"  📄 PROCESSANDO {idx}/{len(pedidos_qualificados)}: Pedido {numero}")
             logger.info(f"{'─'*65}")
+
 
             try:
                 # 4a. Abre o pedido e captura telefone + nome do cliente
@@ -213,12 +225,14 @@ def main() -> None:
                     whatsapp_bot.enviar_arquivo(driver, caminho_pdf)
 
                     logger.info(f"  ✔  WhatsApp enviado para {nome_cliente}.")
+                    tracker.registrar_envio(numero, nome_cliente, telefone, "ENVIADO")
                     processados.append({
                         "numero": numero,
                         "cliente": nome_cliente,
                         "pdf": caminho_pdf,
                         "whatsapp": True,
                     })
+
 
                     # Volta ao sistema do laboratório (pode ter mudado de aba)
                     lab_bot.navegar_para_pedidos(driver)

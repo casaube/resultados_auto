@@ -26,6 +26,11 @@ lab_automation.log
 laudos/
 *.pdf
 
+# ─── Histórico local de envios (SQLite e CSV) ──────────────────────────────────
+historico_envios.db
+historico_envios.csv
+
+
 # ─── Editores e IDEs ──────────────────────────────────────────────────────────
 .vscode/
 .idea/
