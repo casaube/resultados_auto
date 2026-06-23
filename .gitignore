@@ -33,6 +33,10 @@ historico_envios.csv
 # ─── Perfil de Automação do Navegador (contém cookies/sessões locais) ──────────
 perfil_automacao/
 
+# ─── Binários do WebDriver local ──────────────────────────────────────────────
+msedgedriver.exe
+
+
 
 
 # ─── Editores e IDEs ──────────────────────────────────────────────────────────

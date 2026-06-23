@@ -53,7 +53,6 @@ logger = logging.getLogger("main")
 # ──────────────────────────────────────────────────────────────────────────────
 
 def parse_args() -> argparse.Namespace:
-    hoje = date.today().strftime("%d/%m/%Y")
     parser = argparse.ArgumentParser(
         description="Automação em lote — Laboratório Solo & Companhia",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -61,13 +60,13 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--data-inicio",
-        default=hoje,
-        help=f"Data inicial do filtro (dd/mm/aaaa). Padrão: hoje ({hoje})",
+        default=None,
+        help="Data inicial do filtro (dd/mm/aaaa). Padrão: Hoje menos DIAS_ATRAS definido no .env",
     )
     parser.add_argument(
         "--data-fim",
-        default=hoje,
-        help=f"Data final do filtro (dd/mm/aaaa). Padrão: hoje ({hoje})",
+        default=None,
+        help="Data final do filtro (dd/mm/aaaa). Padrão: hoje",
     )
     parser.add_argument(
         "--sem-whatsapp",
@@ -77,16 +76,29 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+
 # ──────────────────────────────────────────────────────────────────────────────
 # Fluxo principal
 # ──────────────────────────────────────────────────────────────────────────────
 
 def main() -> None:
     args = parse_args()
-    data_inicio = args.data_inicio
-    data_fim = args.data_fim
     sem_whatsapp = args.sem_whatsapp
     data_hoje = date.today().strftime("%d/%m/%Y")
+
+    # Calcula as datas de acordo com os parâmetros ou arquivo .env
+    from datetime import timedelta
+    if args.data_inicio is None:
+        data_inicio_dt = date.today() - timedelta(days=config.DIAS_ATRAS)
+        data_inicio = data_inicio_dt.strftime("%d/%m/%Y")
+    else:
+        data_inicio = args.data_inicio
+
+    if args.data_fim is None:
+        data_fim = data_hoje
+    else:
+        data_fim = args.data_fim
+
 
     logger.info("=" * 65)
     logger.info("  🧪 AUTOMAÇÃO LABORATÓRIO SOLO & COMPANHIA — MODO LOTE")

@@ -22,6 +22,8 @@ def _exigir(chave: str) -> str:
 
 # ── Sistema ────────────────────────────────────────────────────────────────────
 LAB_URL = _exigir("LAB_URL")
+DIAS_ATRAS = int(os.getenv("DIAS_ATRAS", "0").strip())
+
 
 # ── XPath — Navegação: Comercial → Pedidos ─────────────────────────────────────
 XPATH_MENU_COMERCIAL = os.getenv(
